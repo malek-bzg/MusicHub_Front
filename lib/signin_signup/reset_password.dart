@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class UserService{
 
-  final String _baseUrl = "192.168.1.4:3000";
+  final String _baseUrl = "192.168.1.11:3000";
 
 
   Future<String> forgotPass(Map<String,String> email) async {

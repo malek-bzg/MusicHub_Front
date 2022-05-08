@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'login.dart';
 import 'package:image_picker/image_picker.dart';
 //import 'package:flutter/src/painting/image_provider.dart';
 import 'dart:io';
@@ -19,7 +20,7 @@ class _SignupState extends State<Signup> {
 
   final GlobalKey<FormState> _keyForm = GlobalKey<FormState>();
 
-  final String _baseUrl = "10.0.2.2:3000";
+  final String _baseUrl = "192.168.1.11:3000";
   bool circular = false;
   final ImagePicker _picker = ImagePicker();
   PickedFile? _imageFile;
@@ -30,33 +31,60 @@ class _SignupState extends State<Signup> {
   }
   @override
   Widget build(BuildContext context) {
+
+
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.deepOrangeAccent,
-        title: const Center(child: Text('SignUp')),
-      ),
-      body: Form(
+
+      body:Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/images/background.jpg"),
+            fit: BoxFit.cover,
+
+          ),
+        ),
+        child: Form(
         key: _keyForm,
+
         child: ListView(
           children: [
+            Container(
+                width: double.infinity,
+                margin: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                child: Image.asset("assets/images/register.png",
+                    width: 215, height: 150)),
+
+
+
+
+
+            SizedBox(
+              height: 30,
+            ),
+
+
+
             imageProfile(),
             SizedBox(
-              height: 20,
+              height: 30,
             ),
+
             Container(
               margin: const EdgeInsets.fromLTRB(30, 0, 30, 10),
               child: TextFormField(
-                decoration: const InputDecoration(
-                    border: OutlineInputBorder(), labelText: "FirstName"),
+                decoration:  InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(40),
+                    ), labelText: "Username"),
                 onSaved: (String? value) {
                   _username = value;
                 },
                 validator: (String? value) {
                   if (value == null || value.isEmpty) {
-                    return "firstname ne doit pas etre vide";
+                    return "username ne doit pas etre vide";
                   }
                   else if (value.length < 5) {
-                    return "firstname doit avoir au moins 5 caractères";
+                    return "username doit avoir au moins 5 caractères";
                   }
                   else {
                     return null;
@@ -68,8 +96,10 @@ class _SignupState extends State<Signup> {
               margin: const EdgeInsets.fromLTRB(30, 0, 30, 10),
               child: TextFormField(
                 keyboardType: TextInputType.emailAddress,
-                decoration: const InputDecoration(
-                    border: OutlineInputBorder(), labelText: "Email"),
+                decoration:  InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(40),
+                    ), labelText: "Email"),
                 onSaved: (String? value) {
                   _email = value;
                 },
@@ -91,8 +121,10 @@ class _SignupState extends State<Signup> {
               margin: const EdgeInsets.fromLTRB(30, 0, 30, 10),
               child: TextFormField(
                 obscureText: true,
-                decoration: const InputDecoration(
-                    border: OutlineInputBorder(), labelText: "Mot de passe"),
+                decoration:  InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(40),
+                    ),labelText: "Mot de passe"),
                 onSaved: (String? value) {
                   _password = value;
                 },
@@ -110,14 +142,26 @@ class _SignupState extends State<Signup> {
               ),
             ),
 
-
+            SizedBox(
+              height: 20,
+            ),
             Container(
-              margin: const EdgeInsets.fromLTRB(40, 0, 40, 0),
+              margin: const EdgeInsets.fromLTRB(90, 0, 90, 0),
               child: ElevatedButton(
+
                 style: ElevatedButton.styleFrom(
-                  primary: Colors.deepOrangeAccent, // background
+                  shape: new RoundedRectangleBorder(
+                    borderRadius: new BorderRadius.circular(15.0),
+                  ),
+                  padding: EdgeInsets.all(14),
+                  primary: Colors.white70  ,
+                    side: BorderSide(width: 3.0, color: Colors.orangeAccent,)
+                  // background
                 ),
-                child: const Text("Confirm !"),
+
+
+                child: const Text("Enregistrer" , style: TextStyle(fontWeight: FontWeight.bold , color: Colors.orange)),
+
                 onPressed: ()  async {
                   if(_keyForm.currentState!.validate()) {
                     _keyForm.currentState!.save();
@@ -159,9 +203,27 @@ class _SignupState extends State<Signup> {
                 },
               ),
             ),
+            SizedBox(
+              height: 50,
+            ),
+            Container(
+              margin: const EdgeInsets.fromLTRB(40, 0, 40, 0),
+              child:IconButton (
+                alignment: Alignment.bottomLeft,
+                icon: Icon(Icons.arrow_back),
+                iconSize: 60,
+                color: Colors.deepOrange,
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => const Login()));
+                },
+              ),
+            ),
           ],
+
         ),
+
       ),
+      )
     );
 
   }
@@ -174,8 +236,9 @@ class _SignupState extends State<Signup> {
           children: <Widget>[
         CircleAvatar(
           radius: 80.0,
+         backgroundColor: Colors.white,
          backgroundImage: _imageFile == null?
-         AssetImage("assets/images/logo.png") as ImageProvider : FileImage(File(_imageFile!.path))
+         AssetImage("assets/images/unknown.png") as ImageProvider : FileImage(File(_imageFile!.path))
         ),
         Positioned(
           bottom: 20.0,

@@ -1,5 +1,5 @@
 var profile = {
-  "name" : "Sangvaleap",
+  "name" : "sangvaleap",
   "image" : "https://avatars.githubusercontent.com/u/86506519?v=4",
   "email" : "sangvaleap.vanny@gmail.com"
 };

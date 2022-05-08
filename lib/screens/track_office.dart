@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:online_course/screens/app_colors.dart' as AppColors;
 import 'package:flutter/material.dart';
+import 'package:online_course/screens/drum.dart';
+import 'package:online_course/screens/piano.dart';
+import 'package:online_course/tuner/tunerHome.dart';
 import 'my_tabs.dart';
 import 'track.dart';
 import 'track_home.dart';
@@ -29,16 +32,8 @@ class _MyTrackHomeState extends State<MyTrackHome> with SingleTickerProviderStat
           body: Column(
             children: [
 
-              Row(
-                children: [
-                  Container(
-                      margin: const EdgeInsets.only(left: 20),
-                      child: Text("WELCOME", style: TextStyle(fontSize: 30))
 
-                  )
-                ],
-              ),
-              SizedBox(height: 20,),
+
 
               Expanded(child: NestedScrollView(
                 controller: _scrollController,
@@ -69,9 +64,9 @@ class _MyTrackHomeState extends State<MyTrackHome> with SingleTickerProviderStat
                                 ]
                             ),
                             tabs: [
-                              AppTabs(color:AppColors.menu1Color, text:"PROJECT", key: ValueKey(1), ),
-                              AppTabs(color:AppColors.menu2Color, text:"ADD Track", key: ValueKey(2), ),
-                              AppTabs(color:AppColors.menu3Color, text:"Trending", key: ValueKey(3),),
+                              AppTabs(color:AppColors.menu1Color, text:"New", key: ValueKey(1), ),
+                              AppTabs(color:AppColors.menu2Color, text:"Track List", key: ValueKey(2), ),
+                              AppTabs(color:AppColors.menu3Color, text:"Features", key: ValueKey(3),),
                             ],
                           ),
                         ),
@@ -90,12 +85,48 @@ class _MyTrackHomeState extends State<MyTrackHome> with SingleTickerProviderStat
                         child:TrackHome()
                     ),
                     Material(
-                      child: ListTile(
-                        leading: CircleAvatar(
-                          backgroundColor: Colors.grey,
-                        ),
-                        title: Text("Content"),
-                      ),
+
+                      child: ListView(
+                        scrollDirection: Axis.horizontal,
+                        children: [
+                           ElevatedButton (
+                             style: ElevatedButton.styleFrom(
+                               primary: Colors.white, // background
+                             ),
+                            child: Image.asset("assets/images/drumachine.png", width: 500,),
+
+                            onPressed: () {
+                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => Drum()));
+                            },
+                          ),
+                          ElevatedButton (
+                            style: ElevatedButton.styleFrom(
+                              primary: Colors.white, // background
+                              shape: new RoundedRectangleBorder(
+                                borderRadius: new BorderRadius.circular(15.0),
+                              ),
+                            ),
+                            child: Image.asset("assets/images/Tuner.png"),
+
+                            onPressed: () {
+                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => TunerHome()));
+                            },
+                          ),
+                          ElevatedButton (
+                            style: ElevatedButton.styleFrom(
+                              primary: Colors.white, // background
+                              shape: new RoundedRectangleBorder(
+                                borderRadius: new BorderRadius.circular(15.0),
+                              ),
+                            ),
+                            child: Image.asset("assets/images/Piano.png"),
+
+                            onPressed: () {
+                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => FlutterPianoScreen()));
+                            },
+                          ),
+                        ],
+                      )
 
                     ),
                   ],

@@ -11,16 +11,24 @@ class Track extends StatefulWidget {
 }
 
 class _TrackState extends State<Track> {
+  List<String> items = [" F#", "G#", "A#", "B", "C#", "D#"];
+  String? key = ' F#' ;
+  List<String> items1 = [" broad (40 - 58 bpm)", "slow (60 - 76 bpm) ", " speed (80 - 106 bpm) ", " pace (108 - 118 bpm) ", "fast_cheerful(120 - 168 bpm)", "fast (170 - 220 b.p.m) "];
+  String? tempo = ' broad (40 - 58 bpm)' ;
+
+  List<String> items2 = [" Rhythm : measure", "4/4 ", "C " ," 2/2 ", " 3/4", "6/8"];
+  String? measure = ' Rhythm : measure' ;
+
   late String? _nom;
   late String? _instrument;
   late String? _key;
   late String? _measure;
   late String? _tempo;
-  late String? _MusicTr;
+
   String id = "";
   String _id = "";
   final GlobalKey<FormState> _keyForm = GlobalKey<FormState>();
-  final String _baseUrl = "10.0.2.2:3000";
+  final String _baseUrl = "192.168.1.11:3000";
   @override
   void initState() {
     super.initState();
@@ -52,7 +60,7 @@ class _TrackState extends State<Track> {
             Container(
                 width: double.infinity,
                 margin: const EdgeInsets.fromLTRB(20, 0, 20, 10),
-                child: Image.asset("assets/images/newP.jpg", width: 460, height: 215)
+                child: Image.asset("assets/images/newtrack.png", width: 460, height: 215)
             ),
             Container(
               margin: const EdgeInsets.fromLTRB(10, 0, 10, 10),
@@ -92,76 +100,47 @@ class _TrackState extends State<Track> {
             ),
             Container(
               margin: const EdgeInsets.fromLTRB(10, 0, 10, 10),
-              child: TextFormField(
-                decoration: const InputDecoration(
-                    border: OutlineInputBorder(), labelText: "key"),
-                onSaved: (String? value) {
-                  _key = value;
-                },
-                validator: (String? value) {
-                  if(value == null || value.isEmpty) {
-                    return "Field must not be empty";
-                  }
-                  else {
-                    return null;
-                  }
-                },
+              child: DropdownButton<String>(
+                value: key,
+                items: items
+                    .map((item) => DropdownMenuItem<String>(
+                  value: item,
+                  child: Text(item, style: TextStyle(fontSize: 24)),
+                )).toList(),
+                onChanged: (item)=> setState(() =>key = item ),
+
               ),
             ),
             Container(
               margin: const EdgeInsets.fromLTRB(10, 0, 10, 10),
-              child: TextFormField(
-                decoration: const InputDecoration(
-                    border: OutlineInputBorder(), labelText: "measure"),
-                onSaved: (String? value) {
-                  _measure = value;
-                },
-                validator: (String? value) {
-                  if(value == null || value.isEmpty) {
-                    return "Field must not be empty";
-                  }
-                  else {
-                    return null;
-                  }
-                },
+              child: DropdownButton<String>(
+                value: measure,
+                items: items2
+                    .map((item) => DropdownMenuItem<String>(
+                  value: item,
+                  child: Text(item, style: TextStyle(fontSize: 24)),
+                )).toList(),
+                onChanged: (item)=> setState(() =>measure = item ),
+
               ),
             ),
+
             Container(
-              margin: const EdgeInsets.fromLTRB(10, 0, 10, 10),
-              child: TextFormField(
-                decoration: const InputDecoration(
-                    border: OutlineInputBorder(), labelText: "tempo"),
-                onSaved: (String? value) {
-                  _tempo = value;
-                },
-                validator: (String? value) {
-                  if(value == null || value.isEmpty) {
-                    return "Field must not be empty";
-                  }
-                  else {
-                    return null;
-                  }
-                },
+              child :Flexible(
+                child: DropdownButton<String>(
+                  value: tempo,
+                  items: items1
+                      .map((item) => DropdownMenuItem<String>(
+                    value: item,
+                    child: Text(item, style: TextStyle(fontSize: 24)),
+                  )).toList(),
+                  onChanged: (item)=> setState(() =>tempo = item ),
+
+                ),
               ),
             ),
-            Container(
-              margin: const EdgeInsets.fromLTRB(10, 0, 10, 10),
-              child: TextFormField(
-                decoration: const InputDecoration(
-                    border: OutlineInputBorder(), labelText: "MusicTr"),
-                onSaved: (String? value) {
-                  _MusicTr = value;
-                },
-                validator: (String? value) {
-                  if(value == null || value.isEmpty) {
-                    return "Field must not be empty";
-                  }
-                  else {
-                    return null;
-                  }
-                },
-              ),
-            ),
+
+
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -175,10 +154,10 @@ class _TrackState extends State<Track> {
                         // "profilePicture": _username,
                         "Nom" : _nom,
                         "instrument" : _instrument,
-                        "key" : _key,
-                        "measure" : _measure,
-                        "tempo" : _tempo,
-                        "MusicTr" : _MusicTr,
+                        "key" : key,
+                        "measure" : measure,
+                        "tempo" : tempo,
+
                         "user" : _id,
                         "musicProject" : id
 
@@ -229,4 +208,3 @@ class _TrackState extends State<Track> {
     );
   }
 }
-

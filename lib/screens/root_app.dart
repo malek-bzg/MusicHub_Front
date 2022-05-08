@@ -25,8 +25,8 @@ class _RootAppState extends State<RootApp>  with TickerProviderStateMixin{
       "page" : HomePage(),
     },
     {
-      "icon" : "assets/icons/search.svg",
-      "active_icon" : "assets/icons/search.svg",
+      "icon" : "assets/icons/play1.svg",
+      "active_icon" : "assets/icons/play1.svg",
       "page" : MusicProject(),
     },
     {
@@ -91,7 +91,9 @@ class _RootAppState extends State<RootApp>  with TickerProviderStateMixin{
     return Scaffold(
       backgroundColor: appBgColor,
       bottomNavigationBar: getBottomBar(),
-      body: getBarPage()
+      body:
+      getBarPage()
+
     );
   }
 
@@ -111,7 +113,7 @@ class _RootAppState extends State<RootApp>  with TickerProviderStateMixin{
       height: 75,
       width: double.infinity,
       decoration: BoxDecoration(
-        color: bottomBarColor,
+          color: Colors.white,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(25), 
           topRight: Radius.circular(25)

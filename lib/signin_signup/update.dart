@@ -17,7 +17,7 @@ class _UpdateUserState extends State<UpdateUser> {
   late String? _lastName;
   final GlobalKey<FormState> _keyForm = GlobalKey<FormState>();
 
-  final String _baseUrl = "10.0.2.2:3000";
+  final String _baseUrl = "192.168.1.11:3000";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,7 +32,7 @@ class _UpdateUserState extends State<UpdateUser> {
             Container(
                 width: double.infinity,
                 margin: const EdgeInsets.fromLTRB(20, 0, 20, 10),
-                child: Image.asset("assets/images/logo.png", width: 150, height: 220)
+                child: Image.asset("assets/images/unknown.png", width: 150, height: 220)
             ),
 
             Container(

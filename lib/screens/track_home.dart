@@ -16,9 +16,9 @@ class _TrackHomeState extends State<TrackHome> {
   String _id = "";
 
   late Future<bool> fetchtrack;
-
+  late List<String> _products2 = [];
   final List<Product1> _products1 = [];
-  final String _baseUrl = "10.0.2.2:3000";
+  final String _baseUrl = "192.168.1.11:3000";
   Future<bool> Trackfet() async {
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -35,15 +35,25 @@ class _TrackHomeState extends State<TrackHome> {
 
 
     for(int i = 0; i < S.length; i++) {
-      Map<String, dynamic> Server = S[i];
+      Map<dynamic, dynamic> Server = S[i];
       //print(S[i]);
-     // print(Server["Nom"]);
+      // print(Server["Nom"]);
       //print(Server["instrument"]);
       //print(Server["key"]);
-      print(Server["measure"].toString());
-      _products1.add(Product1( Server["Nom"].toString(), Server["instrument"].toString(),Server["key"].toString(),Server["measure"].toString(),Server["tempo"].toString(), Server["MusicTr"].toString(), Server["musicProject"].toString(),Server["_id"].toString()));
-print(_products1);
+      print(Server["MusicTr"][0]);
+      print("222222222222222222222222");
+
+
+      //List<String> _products3 = [...Server["MusicTr"]];
+      List<String> _products3 = [];
+      _products3.insert(0, Server["MusicTr"][0]);
+      print(_products3);
+      _products1.add(Product1( Server["Nom"].toString(), Server["instrument"].toString(),Server["key"].toString(),Server["measure"].toString(),Server["tempo"].toString(), _products3, Server["musicProject"].toString(),Server["_id"].toString()));
+      print(_products1);
     }
+
+
+
     print(_products1[0].Nom);
 
     return true;

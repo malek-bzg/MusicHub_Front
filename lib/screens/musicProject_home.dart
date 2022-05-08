@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -19,7 +20,7 @@ class _MusicHomeState extends State<MusicHome> {
   late Future<bool> fetchedGames;
 
   final List<Product> _products = [];
-  final String _baseUrl = "10.0.2.2:3000";
+  final String _baseUrl = "192.168.1.11:3000";
 
   Future<bool> fetchGames() async {
 
@@ -50,24 +51,48 @@ class _MusicHomeState extends State<MusicHome> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: fetchedGames,
-      builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-        if(snapshot.hasData) {
-          return ListView.builder(
-            itemCount: _products.length,
-            itemBuilder: (BuildContext context,int index, ) {
-              return MusicInfo(_products[index].Nom, _products[index].style, _products[index].type, _products[index].image,_products[index].id,);
+    return
+      Scaffold(
+          appBar: AppBar(
+            leading: IconButton(
+              icon:Icon(Icons.arrow_back_ios,),
+              onPressed: (){
+                Navigator.pushNamed(context, "/home");
+
+              },
+            ),
+            title: Text('Your Projects'),
+            toolbarHeight: 60,
+            actions: [
+
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: Icon(Icons.search),
+              ),
+
+            ],
+            backgroundColor: Colors.deepOrange,
+          ),
+          body: FutureBuilder(
+            future: fetchedGames,
+            builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+
+              if(snapshot.hasData) {
+                return ListView.builder(
+                  itemCount: _products.length,
+                  itemBuilder: (BuildContext context,int index, ) {
+                    return MusicInfo(_products[index].Nom, _products[index].style, _products[index].type, _products[index].image,_products[index].id,);
+                  },
+                );
+              }
+              else {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
             },
-          );
-        }
-        else {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-      },
-    );;
+          )
+      );
   }
 
 

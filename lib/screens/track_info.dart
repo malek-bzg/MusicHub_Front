@@ -1,5 +1,17 @@
+import 'dart:async';
+import 'dart:typed_data';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:online_course/screens/home_screen/cubit/record/record_cubit.dart';
+import 'package:online_course/screens/home_screen/home_screen.dart';
+import 'package:online_course/screens/recordings_list/cubit/files/files_cubit.dart';
+import 'package:path/path.dart' as path;
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:online_course/audio/detail_audio_page.dart';
+import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -11,23 +23,28 @@ class TrackInfo extends StatefulWidget {
   final String _key;
   final String _measure;
   final String _tempo;
-  final String _MusicTr;
+  final List<String> _MusicTr;
   final String _musicProject;
 
 
   final String _id;
 
-  TrackInfo(  this._Nom, this._instrument, this._key, this._measure, this._tempo, this._musicProject,this._MusicTr,this._id,);
+  TrackInfo(  this._Nom, this._instrument, this._key, this._measure, this._tempo,this._MusicTr, this._musicProject,this._id,);
 
   @override
   _TrackInfoState createState() => _TrackInfoState();
 }
 
 class _TrackInfoState extends State<TrackInfo> {
-  final ImagePicker _picker = ImagePicker();
+
+  //PlatformFile? file;
   PickedFile? _imageFile;
   String musicProject = "";
   String _id = "";
+
+  get newPath => null;
+
+  File? get sourceFile => null;
 
   void initState() {
     PickedFile _imageFile;
@@ -42,7 +59,7 @@ class _TrackInfoState extends State<TrackInfo> {
       _id = prefs.getString("_id1")!;
     });
   }
-  final String _baseUrl = "10.0.2.2:3000";
+  final String _baseUrl = "192.168.1.11:3000";
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -55,11 +72,13 @@ class _TrackInfoState extends State<TrackInfo> {
           prefs.setString("key", widget._key);
           prefs.setString("measure", widget._measure);
           prefs.setString("tempo", widget._tempo);
-          prefs.setString("MusicTr", widget._MusicTr );
+          prefs.setStringList("MusicTr", widget._MusicTr );
           prefs.setString("musicProject", widget._musicProject );
           prefs.setString("_id1", widget._id );
 
-          Navigator.pushNamed(context, "/AudioPage");
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context)=>DetailAudioPage(key: ValueKey(int), Nomm: '', instrument: '', MusicTr: '',))
+          );
         },
 
         child: Row(
@@ -77,7 +96,7 @@ class _TrackInfoState extends State<TrackInfo> {
 
                   };
                   http.delete(
-                    Uri.http(_baseUrl, "/api/track/"), headers: headers,body: json.encode(userData))
+                      Uri.http(_baseUrl, "/api/track/"), headers: headers,body: json.encode(userData))
                       .then((http.Response response) {
                     if (response.statusCode == 201) {
                       //Navigator.pushReplacementNamed(context, "/");
@@ -117,68 +136,134 @@ class _TrackInfoState extends State<TrackInfo> {
               ],
             ),
 
-           Row(
-             children:[
-             const SizedBox(
-               height: 50,
-             ),
-             ],
-           ),
+            Row(
+              children:[
+                const SizedBox(
+                  height: 50,
+                ),
+              ],
+            ),
             Expanded(child: Column()),
-           Column(
+            Column(
 
-             mainAxisAlignment: MainAxisAlignment.end,
-             crossAxisAlignment: CrossAxisAlignment.end,
-               mainAxisSize: MainAxisSize.min,
-               children: [
-                 ElevatedButton(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ElevatedButton(
 
-                   child: const Text("Choose TRACK"),
-                   onPressed: () async {
-                     showModalBottomSheet(
-                       context: context,
-                       builder: ((builder) => bottomSheet()),
-                     );
-                   },
-                   style: ElevatedButton.styleFrom(padding: EdgeInsets.fromLTRB(20, 0, 20, 0),),
+                    onPressed:() {
 
-                 ),
-                 const SizedBox(
-                   height: 20,
-                 ),
+                      Navigator.pushNamed(context, "/homescreen");
 
-                 ElevatedButton(
-                   style: ElevatedButton.styleFrom(padding: EdgeInsets.fromLTRB(30, 0, 30, 0),),
-                   child: const Text("ADD TRACK"),
-                   onPressed: () async {
-                     var request = new http.MultipartRequest('PUT',Uri.http( _baseUrl,"/api/track/addMusicTr"));
-                     var stream = new http.ByteStream(_imageFile!.openRead());
-                     stream.cast();
+                    },
+                    child: const Text("Record")
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
 
-                     final file = await http.MultipartFile.fromPath('photos', _imageFile!.path);
-                     request.fields['_id']= _id;
-                     request.files.add(file);
-                     request.headers.addAll({"Content-Type": "multipart/form-data",
-                     });
-                     var response = await request.send();
-                     if (response.statusCode == 201) {
-                       //Navigator.pushReplacementNamed(context, "/");
-                     }
-                     else {
-                       showDialog(
-                           context: context,
-                           builder: (BuildContext context) {
-                             return const AlertDialog(
-                               title: Text("Information"),
-                               content: Text(
-                                   "Une erreur s'est produite. Veuillez réessayer !"),
-                             );
-                           });
-                     }
-                   },
-                 ),
-               ],
-           ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(padding: EdgeInsets.fromLTRB(30, 0, 30, 0),),
+                  child: const Text("ADD TRACK"),
+                  onPressed: () async {
+
+                    FilePickerResult? result = await FilePicker.platform.pickFiles();
+
+
+                    if (result != null) {
+                      File file = File(result.files.single.path!);
+                    } else {
+                      // User canceled the picker
+                    }
+
+
+
+
+
+
+                    //FilePickerResult? result1 = await FilePicker.platform.pickFiles();
+
+
+
+
+
+                    if (result != null) {
+                      print("6565655656565656565656");
+                      //Uint8List? fileBytes = result.files.first.bytes;
+
+
+                      PlatformFile file = result.files.first;
+                      print('222222222222222222222222221');
+                      print(file.name);
+                      print("5555555555555555555555555555555");
+                      print(file.bytes);
+                      print(file.size);
+                      print(file.extension);
+                      print("6666666666666666666666666");
+                      print(file.path);
+                      final newFile = await _buttonPressed(file);
+                      String fileName = result.files.first.name;
+                      print(fileName);
+
+
+                      //final file1 = result.files.first.path.toString();
+                      //final file1 = File(pickedFile!.path!).toString();
+                      print("6565655656565656565656");
+                      /*final file = await http.MultipartFile('photos', File(fileName).readAsBytes().asStream(),
+                           File(fileName).lengthSync(),
+                           filename: fileName.split("/").last);*/
+                      print(file.path!);
+                      final file1 =  await http.MultipartFile.fromPath('photos', file.path!);
+                      //final file1 = await http.MultipartFile.fromBytes('photos',  File(newFile.toString()).readAsBytesSync(),
+                      //filename: fileName.split("/").last);
+                      // Upload file
+                      // await FirebaseStorage.instance.ref('uploads/$fileName').putData(fileBytes);
+
+                      var request = new http.MultipartRequest('PUT',Uri.http( _baseUrl,"/api/track/addMusicTr"));
+
+                      Map<String, dynamic> userData = {
+                        "_id1": widget._id,
+
+                      };
+
+                      print(widget._id);
+                      Map<String, String> headers = {
+                        "Content-Type": "application/json; charset=UTF-8"
+                      };
+                      print("ddddddddddddddddddddddd");
+                      print(_id);
+                      request.fields['_id']= widget._id;
+                      request.files.add(file1);
+                      request.headers.addAll({"Content-Type": "multipart/form-data",
+                      });
+                      var response = await request.send();
+                      if (response.statusCode == 200) {
+                        //Navigator.pushReplacementNamed(context, "/");
+                        print("okey ya start staneni fel lagare");
+                      }
+                      else {
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return const AlertDialog(
+                                title: Text("Information"),
+                                content: Text(
+                                    "Une erreur s'est produite. Veuillez réessayer !"),
+                              );
+                            });
+                      }
+                    }
+
+
+
+
+
+
+                  },
+                ),
+              ],
+            ),
           ],
         ),
 
@@ -212,8 +297,40 @@ class _TrackInfoState extends State<TrackInfo> {
 
             FlatButton.icon(
               icon: Icon(Icons.image),
-              onPressed: () {
-                takePhoto(ImageSource.gallery);
+              onPressed: () async {
+
+                //FilePickerResult? result = await FilePicker.platform.pickFiles();
+                final result = await FilePicker.platform.pickFiles();
+
+                if (result != null) {
+                  File file = File(result.files.single.path.toString());
+                } else {
+                  // User canceled the picker
+                }
+
+
+
+
+
+
+                PlatformFile file = result!.files.first;
+                print('222222222222222222222222221');
+                print(file.name);
+                print("5555555555555555555555555555555");
+                print(file.bytes);
+                print(file.size);
+                print(file.extension);
+                print("6666666666666666666666666");
+                print(file.path);
+                final newFile = await _buttonPressed(file);
+                print('From path:${file.path!} ');
+                print('TO path:${newFile.path} ');
+
+                //var basNameWithExtension = path.basename(file.path!);
+                //var file1 =  await moveFile(sourceFile!,newPath+"/"+basNameWithExtension);
+
+
+
               },
               label: Text("Gallery"),
             ),
@@ -222,27 +339,66 @@ class _TrackInfoState extends State<TrackInfo> {
       ),
     );
   }
-  void takePhoto(ImageSource source) async {
-    final pickedFile = await _picker.getImage(
-      source: source,
-    );
-    setState(() {
-      _imageFile = pickedFile!;
 
-    });
+  Future getFile() async {
+    //final path = '${pickedFile!.name}';
+    //final file = File(pickedFile!.path!);
+    //File file = await FilePicker.getFile();
   }
+
+  void openFile(PlatformFile file) {
+    OpenFile.open(file.path!);
+  }
+  /*Future<File>  _getLocalFile(String pathFlie) async {
+    final root = await await getApplicationDocumentsDirectory();
+    final path = root+'/'+pathFile;
+    return File(path).create(recursive: true);
+  }*/
+
+  Future<File> saveFilePermanently(PlatformFile file) async{
+    final appStorage = await getApplicationDocumentsDirectory();
+    final newFile = File('${appStorage}/${file.name}');
+    return File(file.path!).copy(newFile.path);
+  }
+  Future<File> _buttonPressed(PlatformFile file) async {
+    Directory tempDir = await getTemporaryDirectory();
+    String tempPath = tempDir.path;
+
+    Directory appDocDir = await getApplicationDocumentsDirectory();
+    String appDocPath = appDocDir.path;
+
+    File ourFile = File('$appDocPath/greeting.txt');
+    print(appDocDir.listSync());
+    return ourFile;
+
+  }
+
+
+  Future<File> moveFile(File sourceFile, String newPath) async {
+    try {
+      /// prefer using rename as it is probably faster
+      /// if same directory path
+      return await sourceFile.rename(newPath);
+    } catch (e) {
+      /// if rename fails, copy the source file
+      final newFile = await sourceFile.copy(newPath);
+      return newFile;
+    }
+  }
+
+
 }
 class Product1 {
 
-
+  final String id;
   final String Nom;
   final String instrument;
   final String key;
   final String measure;
   final String tempo;
-  final String MusicTr;
+  final List<String> MusicTr;
   final String musicProject;
-  final String id;
+
 
   Product1( this.Nom, this.instrument, this.key, this.measure, this.tempo, this.MusicTr, this.musicProject,this.id);
 

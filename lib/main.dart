@@ -1,24 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:online_course/screens/drum.dart';
 import 'package:online_course/screens/musicProject_home.dart';
+import 'package:online_course/screens/piano.dart';
+import 'package:online_course/screens/services/sampler.dart';
 import 'package:online_course/screens/track_home.dart';
 import 'package:online_course/screens/track_office.dart';
 import 'package:online_course/signin_signup/update.dart';
 
-import 'audio/audia_page.dart';
+import 'screens/home_screen/home_screen.dart';
+import 'tuner/tunerHome.dart';
 import 'screens/root_app.dart';
 import 'theme/color.dart';
 import 'signin_signup/login.dart';
 import 'signin_signup/signup.dart';
 import 'signin_signup/update.dart';
 import 'screens/track.dart';
+import 'screens/splashScreen.dart';
 void main() {
+
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+
     return MaterialApp(
+
       debugShowCheckedModeBanner: false,
       title: 'Online Course App',
       theme: ThemeData(
@@ -26,7 +35,10 @@ class MyApp extends StatelessWidget {
       ),
       //home: RootApp(),
       routes: {
-        "/": (BuildContext context) {
+    "/": (BuildContext context) {
+          return SplashScreen();
+        },
+        "/login": (BuildContext context) {
           return const Login();
         },
         "/home": (BuildContext context) {
@@ -43,9 +55,7 @@ class MyApp extends StatelessWidget {
         "/TrackH": (BuildContext context) {
           return const TrackHome();
         },
-        "/AudioPage": (BuildContext context) {
-          return const AudioPage();
-        },
+
         "/THome": (BuildContext context) {
           return const MyTrackHome();
         },
@@ -53,7 +63,21 @@ class MyApp extends StatelessWidget {
         "/update": (BuildContext context) {
           return const UpdateUser();
         },
-
+        "/trackoffice": (BuildContext context) {
+          return const MyTrackHome();
+        },
+        "/homescreen": (BuildContext context) {
+      return  HomeScreen();
+        },
+        "/drum": (BuildContext context) {
+      return  Drum();
+        },
+        "/tuner": (BuildContext context) {
+          return  TunerHome();
+        },
+        "/piano": (BuildContext context) {
+          return  FlutterPianoScreen();
+        },
       },
     );
   }

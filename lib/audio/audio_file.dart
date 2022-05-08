@@ -99,14 +99,23 @@ class _AudioFileState extends State<AudioFile> {
       icon:   Icon(
           Icons.loop
 
-      ), onPressed: () {  },
+      ), onPressed: () { if(isRepeat==false){
+      this.widget.advancedPlayer.setReleaseMode(ReleaseMode.LOOP);
+      setState(() {
+        isRepeat=true;
+        color=Colors.blue;
+      });
+    }else if(isRepeat==true){
+      this.widget.advancedPlayer.setReleaseMode(ReleaseMode.RELEASE);
+      color=Colors.black;
+      isRepeat=false;
+    }  },
     );
   }
   Widget btnRepeat() {
     return IconButton(
       icon: Icon(
           Icons.repeat
-
       ),
       onPressed: (){
         if(isRepeat==false){
